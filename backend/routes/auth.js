@@ -8,7 +8,7 @@ const fetchuser = require('../Middleware/fetchuser')
 
 const JWT_SECRET = 'Keshavisagoodb$oy';
 
-// Create a user using : POST "/api/auth/"  Doesn't requite AUTH
+//Route 1 : Create a user using : POST "/api/auth/"  Doesn't requite AUTH
 router.post(
   "/createuser",
   [
@@ -53,7 +53,7 @@ const Data = {
   }
 }
 )
-// Create a user using : POST "/api/auth/"  Doesn't requite AUTH
+//Route 2 : Create a user using : POST "/api/auth/"  Doesn't requite AUTH
 router.post(
     "/login",
     [
@@ -93,7 +93,7 @@ router.post(
 )
 
 
-// Create a user using : POST "/api/getuser/"   require AUTH
+//Route 3 : Create a user using : POST "/api/getuser/"   require AUTH
 router.post(
     "/getuser",
     fetchuser,
