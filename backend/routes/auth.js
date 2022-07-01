@@ -4,6 +4,7 @@ const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
+const fetchuser = require('../Middleware/fetchuser')
 
 const JWT_SECRET = 'Keshavisagoodb$oy';
 
@@ -51,6 +52,62 @@ const Data = {
     res.status(500).send("some erroe occured");
   }
 }
-);
+)
+// Create a user using : POST "/api/auth/"  Doesn't requite AUTH
+router.post(
+    "/login",
+    [
+      body("email").isEmail(),
+      body("password", "Password cannont be blank").exists()
+    ],
+    async(req, res) => {
+      // If there are errors then send bad request and the errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      const {email, password} = req.body;
+      try {
+        let user = await User.findOne({email});
+        if(!user){
+            return res.status(400).json({error: "Please try to login with correct credentials"});
+        }
+        const passwordCompare = await bcrypt.compare(password, user.password);
+        if(!passwordCompare){
+            return res.status(400).json({error: "Please try to login with correct credentials"});
+        }
+        const Data = {
+            user:{
+                id: user.id
+            }
+        
+        }
+              const authToken = jwt.sign(Data, JWT_SECRET);
+              
+             res.json({authToken});
+      } catch(err){
+        console.error(err.message);
+        res.status(500).send("Internal Server Error");
+      }
+    }
+)
+
+
+// Create a user using : POST "/api/getuser/"   require AUTH
+router.post(
+    "/getuser",
+    fetchuser,
+    async(req, res) => {
+try {
+    userId = req.user.id;
+    const user = await User.findById(userId).select("-password");
+    res.send({user});
+    
+} catch(err){
+    console.error(err.message);
+    res.status(500).send("Internal Server Error");
+  }
+    }
+    )
 
 module.exports = router;
