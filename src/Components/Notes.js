@@ -2,19 +2,24 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import noteContext from "../Context/notes/noteContext";
 import Addnote from "./Addnote";
 import Noteitem from "./Noteitem";
+import {useNavigate} from 'react-router-dom';
 
-const Notes = () => {
+const Notes = (props) => {
   const context = useContext(noteContext);
   const { notes, getAllNotes, editNote} = context;
+  let navigate = useNavigate();
   const[note,setNote] = useState({id:"",etitle:"",edescription:"",etag:""})
   useEffect(() => {
-    getAllNotes();
+    
+        getAllNotes();
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateNote =(currentnote)=>{
     ref.current.click()
     setNote({id : currentnote._id , etitle : currentnote.title, edescription : currentnote.description, etag : currentnote.tag})
+   
   }
   const ref = useRef(null)
   const refClose = useRef(null)
@@ -22,6 +27,7 @@ const Notes = () => {
   const handleClick = (e)=>{
     editNote(note.id,note.etitle,note.edescription,note.etag);
     refClose.current.click();
+    props.showAlert("Updated successfully","success");
     
 }
 
@@ -32,7 +38,7 @@ const onChange =(e)=>{
 
   return (
     <>
-      <Addnote />
+      <Addnote showAlert={props.showAlert}/>
 
       <button
         type="button"
@@ -143,7 +149,7 @@ const onChange =(e)=>{
             {notes.length===0 && "No Notes to display"}
         </div>
         {notes.map((note) => {
-          return <Noteitem key={note._id} updateNote={updateNote} note={note} />;
+          return <Noteitem key={note._id} updateNote={updateNote} note={note} showAlert={props.showAlert} />;
         })}
       </div>
     </>
