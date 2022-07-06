@@ -5,16 +5,22 @@ import Noteitem from "./Noteitem";
 import {useNavigate} from 'react-router-dom';
 
 const Notes = (props) => {
+    let navigate = useNavigate();
   const context = useContext(noteContext);
   const { notes, getAllNotes, editNote} = context;
-  let navigate = useNavigate();
+  
   const[note,setNote] = useState({id:"",etitle:"",edescription:"",etag:""})
   useEffect(() => {
     
+    if(localStorage.getItem('token')){
         getAllNotes();
-    
+    }else{
+
+        navigate("/login")
+    }
+      
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [localStorage.getItem('token')]);
 
   const updateNote =(currentnote)=>{
     ref.current.click()
